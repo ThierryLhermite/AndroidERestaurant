@@ -25,15 +25,20 @@ import androidx.privacysandbox.tools.core.model.Method
 import com.android.volley.toolbox.JsonObjectRequest
 import fr.isen.palayer.androiderestaurant.ui.theme.AndroidERestaurantTheme
 import android.util.Log
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.Divider
 import com.android.volley.Request
 import com.android.volley.toolbox.Volley
 import com.google.gson.Gson
 import org.json.JSONObject
 import androidx.compose.runtime.*
+import androidx.compose.ui.text.font.FontWeight
 import coil.compose.SubcomposeAsyncImage
+import coil.compose.rememberAsyncImagePainter
+import coil.compose.rememberImagePainter
 
 
 class CategoryActivity : ComponentActivity() {
@@ -47,6 +52,8 @@ class CategoryActivity : ComponentActivity() {
                 // A surface container using the 'background' color from the theme
                 Surface(modifier = Modifier.fillMaxSize(), color = MaterialTheme.colorScheme.background) {
                     CategoryMenu(category)
+
+
                 }
             }
         }
@@ -73,6 +80,37 @@ class CategoryActivity : ComponentActivity() {
     }
 }
 
+data class Plat(
+    val id: String,
+    val nameFr: String,
+    val nameEn: String,
+    val idCategory: String,
+    val categNameFr: String,
+    val categNameEn: String,
+    val images: List<String>,
+    val ingredients: List<Ingredient>,
+    val prices: List<Price>
+)
+
+data class Ingredient(
+    val id: String,
+    val idShop: String,
+    val nameFr: String,
+    val nameEn: String,
+    val createDate: String,
+    val updateDate: String,
+    val idPizza: String
+)
+
+data class Price(
+    val id: String,
+    val idPizza: String,
+    val idSize: String,
+    val price: String,
+    val createDate: String,
+    val updateDate: String,
+    val size: String
+)
 
 
 @Composable
@@ -92,9 +130,22 @@ Column {
             Text( modifier = Modifier.padding(top = 25.dp),
                 text = "")
         }
-
-
-
-
-
+}
+ @Composable
+fun DisplayPlats(plats: List<Plat>) {
+    Column(modifier = Modifier.padding(16.dp)) {
+        plats.forEach { plat ->
+            Text(text = plat.nameFr, fontSize = 20.sp, fontWeight = FontWeight.Bold)
+            plat.images.firstOrNull()?.let { imageUrl ->
+                Image(painter = rememberAsyncImagePainter(imageUrl), contentDescription = plat.nameFr)
+            }
+            Column(modifier = Modifier.padding(start = 8.dp)) {
+                Text("Ingrédients:", fontWeight = FontWeight.SemiBold)
+                plat.ingredients.forEach { ingredient ->
+                    Text("- ${ingredient.nameFr}")
+                }
+            }
+            Divider(modifier = Modifier.padding(vertical = 8.dp))
+        }
+    }
 }
